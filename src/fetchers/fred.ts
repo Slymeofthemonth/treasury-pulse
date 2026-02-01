@@ -3,6 +3,7 @@
 import { cache, TTL } from '../cache';
 
 const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
+const FRED_API_KEY = process.env.FRED_API_KEY;
 
 interface FredObservation {
   date: string;
@@ -10,7 +11,8 @@ interface FredObservation {
 }
 
 async function fetchFredSeries(seriesId: string): Promise<FredObservation[]> {
-  const url = `${FRED_BASE}?series_id=${seriesId}&sort_order=desc&limit=10&file_type=json`;
+  if (!FRED_API_KEY) throw new Error('FRED_API_KEY not configured');
+  const url = `${FRED_BASE}?series_id=${seriesId}&api_key=${FRED_API_KEY}&sort_order=desc&limit=15&file_type=json`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`FRED API error: ${res.status}`);
   const data = await res.json();
