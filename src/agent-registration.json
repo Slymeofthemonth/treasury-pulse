@@ -1,0 +1,21 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "Treasury Pulse",
+  "description": "US Federal Reserve and Treasury data for AI agents. Endpoints: /snapshot ($0.01) - Fed rate, Treasury yields, yield curve, balance sheet, CPI, FOMC schedule. /yield ($0.001) - single yield lookup.",
+  "image": "https://treasury-pulse-production.up.railway.app/logo.png",
+  "services": [
+    {
+      "name": "web",
+      "endpoint": "https://treasury-pulse-production.up.railway.app/"
+    },
+    {
+      "name": "x402",
+      "endpoint": "https://treasury-pulse-production.up.railway.app/",
+      "version": "1.0"
+    }
+  ],
+  "x402Support": true,
+  "active": true,
+  "registrations": [],
+  "supportedTrust": ["reputation"]
+}
