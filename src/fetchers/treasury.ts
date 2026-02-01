@@ -24,8 +24,7 @@ export interface SingleYieldData {
 async function fetchTreasuryCSV(): Promise<string> {
   // Treasury.gov provides daily rates - fetch current year
   const year = new Date().getFullYear();
-  const month = String(new Date().getMonth() + 1).padStart(2, '0');
-  const url = `https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/${year}${month}/all?type=daily_treasury_yield_curve&field_tdr_date_value=${year}&page&_format=csv`;
+  const url = `https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/${year}/all?type=daily_treasury_yield_curve&field_tdr_date_value=${year}&page&_format=csv`;
   
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Treasury API error: ${res.status}`);
