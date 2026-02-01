@@ -11,6 +11,7 @@ import { getBalanceSheet } from './fetchers/fred';
 import { getCPI } from './fetchers/fred';
 import { getYields, getYieldCurve, getSingleYield } from './fetchers/treasury';
 import { getFOMC } from './fetchers/fomc';
+import { getFiscalData } from './fetchers/fiscal';
 import { cache } from './cache';
 import agentRegistration from './agent-registration.json';
 
@@ -39,17 +40,18 @@ async function main() {
   // Snapshot endpoint - everything in one call ($0.01)
   addEntrypoint({
     key: 'snapshot',
-    description: 'Complete US macro data snapshot: Fed rate, Treasury yields, yield curve, balance sheet, FOMC schedule, CPI',
+    description: 'Complete US macro data snapshot: Fed rate, Treasury yields, yield curve, balance sheet, FOMC schedule, CPI, fiscal data (debt, GDP, funding deadlines)',
     input: z.object({}),
     price: '0.01',
     handler: async () => {
-      const [fedRate, yields, yieldCurve, balanceSheet, fomc, cpi] = await Promise.all([
+      const [fedRate, yields, yieldCurve, balanceSheet, fomc, cpi, fiscal] = await Promise.all([
         getFedRate(),
         getYields(),
         getYieldCurve(),
         getBalanceSheet(),
         getFOMC(),
         getCPI(),
+        getFiscalData(),
       ]);
 
       return {
@@ -63,10 +65,28 @@ async function main() {
           balanceSheet,
           fomc,
           cpi,
+          fiscal,
           meta: {
             fetchedAt: new Date().toISOString(),
             cacheAge: cache.getAge('yields') || 0,
           },
+        },
+      };
+    },
+  });
+
+  // Fiscal endpoint - debt, GDP, funding deadlines ($0.001)
+  addEntrypoint({
+    key: 'fiscal',
+    description: 'US fiscal data: total debt, debt held by public, GDP, debt-to-GDP ratio, interest on debt, next funding deadline',
+    input: z.object({}),
+    price: '0.001',
+    handler: async () => {
+      const fiscal = await getFiscalData();
+      return {
+        output: {
+          ...fiscal,
+          fetchedAt: new Date().toISOString(),
         },
       };
     },
