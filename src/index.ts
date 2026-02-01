@@ -37,6 +37,26 @@ async function main() {
     timestamp: new Date().toISOString() 
   }));
 
+  // Root endpoint - API overview
+  app.get('/', (c) => c.json({
+    agent: 'treasury-pulse',
+    version: '1.0.0',
+    description: 'US Federal Reserve and Treasury data for AI agents',
+    endpoints: [
+      { path: '/entrypoints/snapshot/invoke', method: 'POST', price: '$0.01', description: 'Complete macro snapshot: Fed rate, yields, yield curve, balance sheet, FOMC, CPI, fiscal data' },
+      { path: '/entrypoints/yield/invoke', method: 'POST', price: '$0.001', description: 'Single Treasury yield (2Y, 5Y, 10Y, 30Y)', input: { tenor: 'string' } },
+      { path: '/entrypoints/fiscal/invoke', method: 'POST', price: '$0.001', description: 'Fiscal data: debt, GDP, debt-to-GDP, interest payments, funding deadlines' },
+    ],
+    free: [
+      { path: '/health', description: 'Health check' },
+      { path: '/.well-known/agent-registration.json', description: 'ERC-8004 registration' },
+    ],
+    registration: {
+      agentId: 22724,
+      registry: 'eip155:1:0x8004A169FB4a3325136EB29fA0ceB6D2e539a432',
+    },
+  }));
+
   // Snapshot endpoint - everything in one call ($0.01)
   addEntrypoint({
     key: 'snapshot',
